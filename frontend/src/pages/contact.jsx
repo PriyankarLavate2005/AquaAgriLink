@@ -1,0 +1,133 @@
+import React, { useState, useRef } from 'react';
+import emailjs from '@emailjs/browser';
+import '../styles/Contact.css';
+
+const ContactPage = () => {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    message: ''
+  });
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState('');
+  const formRef = useRef();
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setError('');
+    emailjs.sendForm(
+      'service_sq5dqco',      // Replace with your EmailJS service ID
+      'template_t28v72g',     // Replace with your EmailJS template ID
+      formRef.current,
+      'n9mYsZ8HCut94yhAC'       // Replace with your EmailJS public key
+    )
+    .then(() => {
+      setSubmitted(true);
+      setFormData({ name: '', email: '', message: '' });
+      setTimeout(() => setSubmitted(false), 3000);
+    }, (err) => {
+      setError('Failed to send message. Please try again.');
+       console.error('EmailJS error:', err);
+    });
+  };
+
+  return (
+    <div className="contact-page">
+      <div className="contact-container">
+        <h1>Contact Us</h1>
+        <p className="contact-description">
+          Have questions or feedback? We'd love to hear from you! Fill out the form below 
+          and we'll get back to you as soon as possible.
+        </p>
+        
+        <div className="contact-content">
+          <form ref={formRef} onSubmit={handleSubmit} className="contact-form">
+            <div className="form-group">
+              <label htmlFor="name">Name</label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="email">Email</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="message">Message</label>
+              <textarea
+                id="message"
+                name="message"
+                value={formData.message}
+                onChange={handleChange}
+                rows="5"
+                required
+              ></textarea>
+            </div>
+            
+            <button type="submit" className="submit-btn">
+              Send Message
+            </button>
+            
+            {submitted && (
+              <div className="success-message">
+                Thank you for your message! We'll be in touch soon.
+              </div>
+            )}
+            {error && (
+              <div className="error-message">
+                {error}
+              </div>
+            )}
+          </form>
+          
+          <div className="contact-info">
+            <h2>Other Ways to Reach Us</h2>
+            <div className="info-item">
+              <i className="fas fa-envelope"></i>
+              <span>priyankalavate@gmail.com</span>
+            </div>
+            <div className="info-item">
+              <i className="fas fa-phone"></i>
+              <span>+91 7559493556</span>
+            </div>
+            <div className="info-item">
+              <i className="fas fa-map-marker-alt"></i>
+              <span>Pandharpur</span>
+            </div>
+            
+            <div className="social-links">
+              <a href="#" aria-label="Facebook"><i className="fab fa-facebook"></i></a>
+              <a href="#" aria-label="Twitter"><i className="fab fa-twitter"></i></a>
+              <a href="#" aria-label="Instagram"><i className="fab fa-instagram"></i></a>
+              <a href="#" aria-label="LinkedIn"><i className="fab fa-linkedin"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ContactPage;
