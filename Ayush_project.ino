@@ -33,10 +33,7 @@ pinMode(7,OUTPUT);
 digitalWrite(5,HIGH);
 digitalWrite(6,HIGH);
 digitalWrite(7,HIGH);
-
- 
 }
-
 void loop()
 {
   Serial.println();
@@ -68,8 +65,6 @@ void loop()
   lcd.print("Light Int.:");
   lcd.print(lux);
   lcd.print("lux");
-
-
 if (aht20.available() == true)
   {
     //Get the new temperature and humidity value
