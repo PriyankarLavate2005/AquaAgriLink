@@ -11,13 +11,14 @@ function RegisterPage() {
 
   const handleRegister = async () => {
     try {
-      // const response = await axiosInstance.post('/auth/register', { name, email, password });
-      // localStorage.setItem('token', response.data.token);
-      // alert('Registration successful!');
+      const response = await axiosInstance.post('/auth/register', { name, email, password });
+      localStorage.setItem('token', response.data.token);
+      alert('Registration successful!');
       navigate('/dashboard');
     } catch (error) {
       console.error('Error during registration:', error);
-      alert('Registration failed. Please try again.');
+      const errorMessage = error.response?.data?.message || 'Registration failed. Please try again.';
+      alert(errorMessage);
     }
   };
 

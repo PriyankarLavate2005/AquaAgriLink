@@ -13,6 +13,7 @@ import SoilMoisture from "./pages/Soilmoisture";
 import CropDisease from "./pages/CropDisease";
 import Forecast from "./pages/Forecast";
 import ContactPage from "./pages/contact";
+import CropRecommendation from "./pages/CropRecommendation";
 function App() {
   return (
     <Router>
@@ -30,6 +31,7 @@ function App() {
         <Route path="/soil-moisture" element={<SoilMoisture />} />
         <Route path='/crop-disease' element={<CropDisease />} />
         <Route path='/weather' element={<Forecast />} />
+        <Route path='/crop-recommendation' element={<CropRecommendation />} />
       </Routes>
     </Router>
   );

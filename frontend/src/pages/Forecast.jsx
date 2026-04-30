@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import '../styles/Forecast.css';
 import Navbar from '../components/Navbar';
 const Forecast = () => {
-  const [city, setCity] = useState('New York');
+  const [city, setCity] = useState('Solapur');
   const [weatherData, setWeatherData] = useState(null);
   const [forecastData, setForecastData] = useState(null);
   const [loading, setLoading] = useState(true);

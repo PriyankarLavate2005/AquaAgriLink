@@ -1,0 +1,252 @@
+/* CropRecommendation.css */
+.recommendation-page {
+    min-height: 100vh;
+    background-color: #f8fafc;
+    padding-bottom: 4rem;
+}
+
+.recommendation-header {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    padding: 4rem 2rem 8rem;
+    text-align: center;
+    color: white;
+}
+
+.header-content h1 {
+    font-size: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.header-icon {
+    width: 40px;
+    height: 40px;
+}
+
+.header-content p {
+    font-size: 1.125rem;
+    opacity: 0.9;
+}
+
+.recommendation-container {
+    max-width: 1200px;
+    margin: -5rem auto 0;
+    padding: 0 1rem;
+}
+
+.recommendation-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 2rem;
+}
+
+.input-card,
+.result-card {
+    background: white;
+    border-radius: 24px;
+    padding: 2.5rem;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(229, 231, 235, 0.5);
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.input-group label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #4b5563;
+}
+
+.input-group input {
+    padding: 0.875rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    transition: all 0.3s;
+    font-size: 1rem;
+}
+
+.input-group input:focus {
+    border-color: #10b981;
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+}
+
+button[type="submit"] {
+    width: 100%;
+    padding: 1rem;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1.125rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2);
+}
+
+button[type="submit"]:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
+}
+
+button[type="submit"]:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Result Card States */
+.result-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 400px;
+    text-align: center;
+}
+
+.empty-state {
+    color: #9ca3af;
+}
+
+.empty-state h3 {
+    color: #4b5563;
+    margin: 1.5rem 0 0.5rem;
+}
+
+.loading-state {
+    color: #10b981;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid #f3f4f6;
+    border-top: 4px solid #10b981;
+    border-radius: 50%;
+    margin: 0 auto 1.5rem;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.error-state {
+    color: #ef4444;
+    padding: 1.5rem;
+    background: #fef2f2;
+    border-radius: 12px;
+    border: 1px solid #fee2e2;
+}
+
+.prediction-success {
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.success-icon {
+    width: 80px;
+    height: 80px;
+    background: #ecfdf5;
+    color: #10b981;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+}
+
+.prediction-result {
+    font-size: 3rem;
+    font-weight: 800;
+    color: #059669;
+    margin: 1rem 0;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.recommendation-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #f3f4f6;
+}
+
+.detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.detail-label {
+    font-size: 0.75rem;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.detail-value {
+    font-weight: 700;
+    color: #1f2937;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .recommendation-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .recommendation-header {
+        padding: 3rem 1rem 6rem;
+    }
+
+    .header-content h1 {
+        font-size: 1.75rem;
+    }
+}

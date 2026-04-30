@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { 
-  Home, 
-  User, 
-  Info, 
-  Phone, 
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import {
+  Home,
+  User,
+  Settings,
+  Info,
+  Phone,
   LogOut,
   ChevronDown,
   Sprout,
@@ -15,8 +16,10 @@ import {
   Cloud,
   Thermometer,
   Droplets,
-  Wind
+  Wind,
+  Shield
 } from 'lucide-react';
+import axiosInstance from '../utils/axiosInstance';
 import '../styles/Navbar.css';
 
 function Navbar() {
@@ -24,9 +27,12 @@ function Navbar() {
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const [weatherData, setWeatherData] = useState(null);
   const [weatherLoading, setWeatherLoading] = useState(true);
+  const [user, setUser] = useState(null);
+
   const dropdownRef = useRef(null);
   const profileDropdownRef = useRef(null);
   const location = useLocation();
+  const navigate = useNavigate();
 
   const toggleDropdown = () => {
     setIsDropdownOpen((prevState) => !prevState);
@@ -36,21 +42,64 @@ function Navbar() {
     setIsProfileDropdownOpen((prevState) => !prevState);
   };
 
-  // Mock weather data - in real app, you'd fetch from API
-  const fetchWeatherData = () => {
+  const fetchUserProfile = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    try {
+      const response = await axiosInstance.get('/auth/profile');
+      if (response.data.success) {
+        setUser(response.data.farmer);
+      }
+    } catch (error) {
+      console.error('Error fetching user profile:', error);
+      // If token is invalid, clear it
+      if (error.response?.status === 401) {
+        localStorage.removeItem('token');
+        setUser(null);
+      }
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setUser(null);
+    navigate('/');
+  };
+
+  // Fetch real weather data from OpenWeatherMap
+  const fetchWeatherData = async () => {
     setWeatherLoading(true);
-    // Simulate API call
-    setTimeout(() => {
+    const city = 'Solapur';
+    const apiKey = '0c005fa00b6a2d265bfea09a97e0d15f';
+
+    try {
+      const response = await fetch(
+        `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`
+      );
+
+      if (!response.ok) throw new Error('Weather data unavailable');
+
+      const data = await response.json();
       setWeatherData({
-        temperature: 28,
-        condition: 'Partly Cloudy',
-        humidity: 65,
-        windSpeed: 12,
-        icon: '⛅',
-        location: 'Farm Field'
+        temperature: Math.round(data.main.temp),
+        condition: data.weather[0].main,
+        humidity: data.main.humidity,
+        windSpeed: data.wind.speed,
+        icon: data.weather[0].icon,
+        location: data.name
       });
+    } catch (error) {
+      console.error('Error fetching weather:', error);
+      // Fallback data if API fails
+      setWeatherData({
+        temperature: 25,
+        condition: 'Clear',
+        location: 'Solapur'
+      });
+    } finally {
       setWeatherLoading(false);
-    }, 1000);
+    }
   };
 
   // Close dropdowns when clicking outside
@@ -72,14 +121,20 @@ function Navbar() {
 
   useEffect(() => {
     fetchWeatherData();
+    fetchUserProfile();
     // Refresh weather every 5 minutes
     const interval = setInterval(fetchWeatherData, 300000);
     return () => clearInterval(interval);
   }, []);
 
+  // Re-fetch profile when location changes (in case user updated profile)
+  useEffect(() => {
+    fetchUserProfile();
+  }, [location.pathname]);
+
   const navItems = [
     { path: '/dashboard', icon: BarChart3, label: 'Dashboard' },
-    { path: '/crop-disease', icon: Sprout, label: 'Disease Detection' },
+    { path: 'http://localhost:5002/index', icon: Sprout, label: 'Disease Detection' },
     { path: '/crop-recommendation', icon: Brain, label: 'Crop Recommendation' },
     { path: '/soil-moisture', icon: CloudRain, label: 'Soil Moisture' },
     { path: '/weather', icon: Cloud, label: 'Weather' },
@@ -102,13 +157,15 @@ function Navbar() {
     <nav className="navbar">
       {/* Logo Section */}
       <div className="navbar-brand">
-        <div className="logo-container">
-          <Sprout className="logo-icon" />
-          <div className="logo-text">
-            <span className="logo-primary">AquaAgri</span>
-            <span className="logo-secondary">Link</span>
+        <Link to="/dashboard" className="logo-link">
+          <div className="logo-container">
+            <Sprout className="logo-icon" />
+            <div className="logo-text">
+              <span className="logo-primary">AquaAgri</span>
+              <span className="logo-secondary">Link</span>
+            </div>
           </div>
-        </div>
+        </Link>
       </div>
 
       {/* Desktop Navigation */}
@@ -141,6 +198,13 @@ function Navbar() {
             </div>
           ) : weatherData ? (
             <Link to="/weather" className="weather-info-text">
+              {weatherData.icon && (
+                <img
+                  src={`https://openweathermap.org/img/wn/${weatherData.icon}.png`}
+                  alt={weatherData.condition}
+                  className="weather-icon-small"
+                />
+              )}
               <div className="weather-text-content">
                 <div className="weather-temp-text">
                   {weatherData.temperature}°C
@@ -158,17 +222,21 @@ function Navbar() {
 
         {/* Profile Dropdown */}
         <div className="profile-section" ref={profileDropdownRef}>
-          <button 
+          <button
             className="profile-trigger"
             onClick={toggleProfileDropdown}
           >
             <div className="profile-avatar">
-              <User size={20} />
+              {user?.profilePicture ? (
+                <img src={user.profilePicture} alt="Avatar" className="avatar-img" />
+              ) : (
+                <User size={20} />
+              )}
             </div>
-            <span className="profile-name">Priyanka Lavate</span>
-            <ChevronDown 
-              size={16} 
-              className={`dropdown-arrow ${isProfileDropdownOpen ? 'open' : ''}`} 
+            <span className="profile-name">{user?.name || 'Guest'}</span>
+            <ChevronDown
+              size={16}
+              className={`dropdown-arrow ${isProfileDropdownOpen ? 'open' : ''}`}
             />
           </button>
 
@@ -176,12 +244,21 @@ function Navbar() {
             <div className="profile-dropdown">
               <div className="profile-header">
                 <div className="profile-avatar-large">
-                  <User size={24} />
+                  {user?.profilePicture ? (
+                    <img src={user.profilePicture} alt="Avatar" className="avatar-img-large" />
+                  ) : (
+                    <User size={24} />
+                  )}
                 </div>
                 <div className="profile-info">
-                  <div className="profile-name-large">Priyanka Lavate</div>
-                  <div className="profile-email">priyankalavate@gmail.com</div>
-                  <div className="profile-role">Premium Farmer</div>
+                  <div className="profile-name-large">{user?.name || 'Agri User'}</div>
+                  <div className="profile-email">{user?.email || 'Login to access full features'}</div>
+                  {user && (
+                    <div className="profile-role-badge-nav">
+                      <Shield size={12} />
+                      {user.role}
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -206,7 +283,7 @@ function Navbar() {
 
               <div className="dropdown-divider" />
 
-              <button className="logout-button">
+              <button className="logout-button" onClick={handleLogout}>
                 <LogOut className="dropdown-icon" size={18} />
                 <span>Logout</span>
               </button>
@@ -217,7 +294,7 @@ function Navbar() {
 
       {/* Mobile Menu Button */}
       <div className="navbar-mobile" ref={dropdownRef}>
-        <button 
+        <button
           className="mobile-menu-button"
           onClick={toggleDropdown}
         >
@@ -235,6 +312,13 @@ function Navbar() {
             <div className="mobile-weather">
               {weatherData && (
                 <div className="mobile-weather-info-text">
+                  {weatherData.icon && (
+                    <img
+                      src={`https://openweathermap.org/img/wn/${weatherData.icon}@2x.png`}
+                      alt={weatherData.condition}
+                      className="weather-icon-mobile"
+                    />
+                  )}
                   <div className="mobile-weather-text-content">
                     <div className="mobile-weather-temp-text">
                       {weatherData.temperature}°C
@@ -251,11 +335,15 @@ function Navbar() {
 
             <div className="mobile-profile">
               <div className="mobile-avatar">
-                <User size={24} />
+                {user?.profilePicture ? (
+                  <img src={user.profilePicture} alt="Avatar" className="avatar-img" />
+                ) : (
+                  <User size={24} />
+                )}
               </div>
               <div className="mobile-profile-info">
-                <div className="mobile-profile-name">Priyanka Lavate</div>
-                <div className="mobile-profile-email">priyankarlavate@gmail.com</div>
+                <div className="mobile-profile-name">{user?.name || 'Agri User'}</div>
+                <div className="mobile-profile-email">{user?.email || 'Welcome!'}</div>
               </div>
             </div>
 
@@ -297,7 +385,7 @@ function Navbar() {
 
             <div className="mobile-divider" />
 
-            <button className="mobile-logout-button">
+            <button className="mobile-logout-button" onClick={handleLogout}>
               <LogOut className="mobile-logout-icon" size={18} />
               <span>Logout</span>
             </button>

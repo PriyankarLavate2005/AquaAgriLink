@@ -38,7 +38,7 @@ const Footer = () => {
         {/* Footer Bottom */}
         <div className="footer-bottom">
           <p>
-            © 2024 Smart Agro. All rights reserved. 🌾
+            © 2026. All rights reserved. 🌾
             <span className="footer-note"> Happy Farming with AquaagriLink</span>
           </p>
         </div>

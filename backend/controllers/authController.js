@@ -43,7 +43,7 @@ exports.getFarmerProfile = async (req, res) => {
 
 // Update Farmer Profile
 exports.updateFarmerProfile = async (req, res) => {
-  const { name, email, role, profilePicture } = req.body; // Include 'role' and 'profilePicture'
+  const { name, email, role, profilePicture, location } = req.body;
   try {
     const farmer = await Farmer.findById(req.user.id);
     if (!farmer) {
@@ -53,10 +53,11 @@ exports.updateFarmerProfile = async (req, res) => {
     farmer.email = email || farmer.email;
     farmer.role = role || farmer.role;
     farmer.profilePicture = profilePicture || farmer.profilePicture;
+    farmer.location = location || farmer.location;
 
     const updatedFarmer = await farmer.save();
     res.json({ success: true, farmer: updatedFarmer });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Error updating profile data.' });
+    res.status(500).json({ success: false, message: error.message });
   }
 };

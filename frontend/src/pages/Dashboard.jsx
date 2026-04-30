@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
-import { 
-  TrendingUp, 
-  Droplets, 
-  Thermometer, 
-  Sun, 
-  Sprout, 
+import { useNavigate ,Link} from "react-router-dom";
+import {
+  TrendingUp,
+  Droplets,
+  Thermometer,
+  Sun,
+  Sprout,
   Calendar,
   DollarSign,
   BarChart3,
@@ -40,6 +40,7 @@ function Dashboard() {
   const [cropInformation, setCropInformation] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
+  const [aiPrediction, setAiPrediction] = useState(null);
 
   const fetchSensorData = async () => {
     try {
@@ -58,33 +59,323 @@ function Dashboard() {
     }
   };
 
+  const getAIPrediction = async () => {
+    setIsLoading(true);
+    try {
+      // These values could come from sensors or user input for a real system
+      const mockNPK = {
+        N: 90,
+        P: 42,
+        K: 43,
+        ph: sensorData.phLevel || 6.5,
+        rainfall: 200
+      };
+
+      const response = await fetch('http://127.0.0.1:5001/predict', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          N: mockNPK.N,
+          P: mockNPK.P,
+          K: mockNPK.K,
+          temperature: sensorData.temperature,
+          humidity: sensorData.humidity,
+          ph: mockNPK.ph,
+          rainfall: mockNPK.rainfall
+        }),
+      });
+
+      if (!response.ok) throw new Error('Prediction failed');
+
+      const data = await response.json();
+      if (data.success) {
+        setAiPrediction(data.prediction);
+      }
+    } catch (error) {
+      console.error("Error getting AI prediction:", error);
+      // alert("Failed to get prediction from the ML server.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const suggestCrops = () => {
     const crops = [
+      // KHARIF (Monsoon - June to October)
       {
-        name: "Tomato",
-        reason: "Ideal for current temperature and soil conditions",
-        suitability: 85,
-        season: "All Season",
-        waterNeeds: "Moderate",
-        image: "🍅",
-        profitMargin: "High"
-      },
-      {
-        name: "Bell Pepper",
-        reason: "Thrives in current humidity levels",
-        suitability: 78,
-        season: "Summer",
-        waterNeeds: "Moderate",
-        image: "🫑",
+        name: "Rice (Paddy)",
+        reason: "Excellent for high moisture and monsoon environment",
+        suitability: 95,
+        season: "Kharif (Monsoon)",
+        waterNeeds: "Very High",
+        image: "https://images.unsplash.com/photo-1536633100650-70f9518d8442?q=80&w=2070&auto=format&fit=crop",
         profitMargin: "Medium"
       },
       {
-        name: "Spinach",
-        reason: "Perfect for current soil moisture",
-        suitability: 92,
-        season: "Winter",
+        name: "Maize (Corn)",
+        reason: "Thrives in warm weather with moderate rainfall",
+        suitability: 88,
+        season: "Kharif/Summer",
+        waterNeeds: "Moderate",
+        image: "https://images.unsplash.com/photo-1551754655-cd27e38d2076?q=80&w=2070&auto=format&fit=crop",
+        profitMargin: "Medium"
+      },
+      {
+        name: "Cotton",
+        reason: "Good for well-drained soil during rainy season",
+        suitability: 82,
+        season: "Kharif (Monsoon)",
+        waterNeeds: "Moderate",
+        image: "https://images.unsplash.com/photo-1594143485073-6775871f375f?q=80&w=2071&auto=format&fit=crop",
+        profitMargin: "High"
+      },
+      {
+        name: "Soybean",
+        reason: "Nitrogen-fixing crop ideal for monsoon",
+        suitability: 84,
+        season: "Kharif (Monsoon)",
+        waterNeeds: "Moderate",
+        image: "https://images.unsplash.com/photo-1594489428504-5c0c480a15fd?q=80&w=2070&auto=format&fit=crop",
+        profitMargin: "Medium"
+      },
+      {
+        name: "Finger Millet (Ragi)",
+        reason: "Drought-resistant, perfect for low rainfall zones",
+        suitability: 91,
+        season: "Kharif (Monsoon)",
+        waterNeeds: "Low",
+        image: "https://images.unsplash.com/photo-1626131317377-3e110c735626?q=80&w=2070&auto=format&fit=crop",
+        profitMargin: "Medium"
+      },
+      {
+        name: "Turmeric",
+        reason: "Thrives in humid climate with heavy rainfall",
+        suitability: 79,
+        season: "Kharif (Monsoon)",
         waterNeeds: "High",
-        image: "🥬",
+        image: "https://images.unsplash.com/photo-1615485290382-441e4d0c9cb5?q=80&w=2070&auto=format&fit=crop",
+        profitMargin: "Very High"
+      },
+      {
+        name: "Sorghum (Jowar)",
+        reason: "Resilient to varying weather",
+        suitability: 86,
+        season: "Kharif/Rabi",
+        waterNeeds: "Low",
+        image: "https://images.unsplash.com/photo-1634068413644-8250ec462002?q=80&w=2070&auto=format&fit=crop",
+        profitMargin: "Medium"
+      },
+      {
+        name: "Groundnut",
+        reason: "Sandy loam soil during monsoon is ideal",
+        suitability: 83,
+        season: "Kharif (Monsoon)",
+        waterNeeds: "Moderate",
+        image: "https://images.unsplash.com/photo-1568253165243-d3493779e56e?q=80&w=2070&auto=format&fit=crop",
+        profitMargin: "High"
+      },
+      {
+        name: "Sugarcane",
+        reason: "Long duration crop requiring high water",
+        suitability: 75,
+        season: "Annual/Kharif",
+        waterNeeds: "Very High",
+        image: "https://images.unsplash.com/photo-1594911776991-66e2c3666f7f?q=80&w=2070&auto=format&fit=crop",
+        profitMargin: "High"
+      },
+      {
+        name: "Black Gram (Urad Dal)",
+        reason: "Quick growing pulse for monsoon",
+        suitability: 87,
+        season: "Kharif (Monsoon)",
+        waterNeeds: "Low",
+        image: "https://images.unsplash.com/photo-1599307767316-776533bb941c?q=80&w=2070&auto=format&fit=crop",
+        profitMargin: "Medium"
+      },
+
+      // RABI (Winter - October to March)
+      {
+        name: "Wheat",
+        reason: "Perfect for cool winter temperatures",
+        suitability: 94,
+        season: "Rabi (Winter)",
+        waterNeeds: "Moderate",
+        image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=1932&auto=format&fit=crop",
+        profitMargin: "High"
+      },
+      {
+        name: "Mustard",
+        reason: "Requires low moisture and cool climate",
+        suitability: 91,
+        season: "Rabi (Winter)",
+        waterNeeds: "Low",
+        image: "https://images.unsplash.com/photo-1596700540608-4107297f6c69?q=80&w=2070&auto=format&fit=crop",
+        profitMargin: "Medium"
+      },
+      {
+        name: "Chickpeas (Gram)",
+        reason: "Thrives in dry, cool conditions",
+        suitability: 89,
+        season: "Rabi (Winter)",
+        waterNeeds: "Low",
+        image: "https://images.unsplash.com/photo-1585994192701-d07942709e6c?q=80&w=1932&auto=format&fit=crop",
+        profitMargin: "Medium"
+      },
+      {
+        name: "Barley",
+        reason: "Highly tolerant to soil salinity in winter",
+        suitability: 88,
+        season: "Rabi (Winter)",
+        waterNeeds: "Low",
+        image: "https://images.unsplash.com/photo-1531233076846-dfb0596395b2?q=80&w=2070&auto=format&fit=crop",
+        profitMargin: "Medium"
+      },
+      {
+        name: "Potato",
+        reason: "Cooler nights facilitate tuber growth",
+        suitability: 92,
+        season: "Rabi (Winter)",
+        waterNeeds: "Moderate",
+        image: "https://images.unsplash.com/photo-1518977676601-b53f02bad67b?q=80&w=2070&auto=format&fit=crop",
+        profitMargin: "High"
+      },
+      {
+        name: "Green Peas",
+        reason: "Thrives in temperatures around 15-20°C",
+        suitability: 85,
+        season: "Rabi (Winter)",
+        waterNeeds: "Moderate",
+        image: "https://images.unsplash.com/photo-1582515073490-39981397c445?q=80&w=2070&auto=format&fit=crop",
+        profitMargin: "Medium"
+      },
+      {
+        name: "Onion",
+        reason: "Ideal for mild winter climate",
+        suitability: 84,
+        season: "Rabi (Winter)",
+        waterNeeds: "Moderate",
+        image: "https://images.unsplash.com/photo-1508747703725-7197771375a0?q=80&w=2070&auto=format&fit=crop",
+        profitMargin: "High"
+      },
+      {
+        name: "Linseed (Flax)",
+        reason: "Grows well in rabi season moisture",
+        suitability: 81,
+        season: "Rabi (Winter)",
+        waterNeeds: "Low",
+        image: "https://images.unsplash.com/photo-1596700540608-4107297f6c69?q=80&w=2070&auto=format&fit=crop",
+        profitMargin: "Medium"
+      },
+      {
+        name: "Garlic",
+        reason: "Cold weather essential for bulb development",
+        suitability: 86,
+        season: "Rabi (Winter)",
+        waterNeeds: "Moderate",
+        image: "https://images.unsplash.com/photo-1540148426945-6cf22a6b2383?q=80&w=2070&auto=format&fit=crop",
+        profitMargin: "High"
+      },
+      {
+        name: "Coriander",
+        reason: "Prefers cool weather for leaf quality",
+        suitability: 90,
+        season: "Rabi (Winter)",
+        waterNeeds: "Moderate",
+        image: "https://images.unsplash.com/photo-1606923829579-0cb981a83e2e?q=80&w=2070&auto=format&fit=crop",
+        profitMargin: "Medium"
+      },
+
+      // ZAID (Summer - March to June)
+      {
+        name: "Watermelon",
+        reason: "High tolerance for summer heat",
+        suitability: 96,
+        season: "Zaid (Summer)",
+        waterNeeds: "High (Surface)",
+        image: "https://images.unsplash.com/photo-1587049352846-4a222e784d38?q=80&w=1974&auto=format&fit=crop",
+        profitMargin: "High"
+      },
+      {
+        name: "Cucumber",
+        reason: "Quick growing crop for dry hot months",
+        suitability: 85,
+        season: "Zaid (Summer)",
+        waterNeeds: "Moderate",
+        image: "https://images.unsplash.com/photo-1449339044511-311738bb5529?q=80&w=2070&auto=format&fit=crop",
+        profitMargin: "Medium"
+      },
+      {
+        name: "Muskmelon",
+        reason: "Thrives in high temperatures and low humidity",
+        suitability: 93,
+        season: "Zaid (Summer)",
+        waterNeeds: "Moderate",
+        image: "https://images.unsplash.com/photo-1589927986089-35812388d1f4?q=80&w=2070&auto=format&fit=crop",
+        profitMargin: "High"
+      },
+      {
+        name: "Pumpkin",
+        reason: "Very hardy crop for summer conditions",
+        suitability: 88,
+        season: "Zaid (Summer)",
+        waterNeeds: "Moderate",
+        image: "https://images.unsplash.com/photo-1506867072417-82a33785501d?q=80&w=2070&auto=format&fit=crop",
+        profitMargin: "Medium"
+      },
+      {
+        name: "Bitter Gourd",
+        reason: "Heat-loving vine crop for summer",
+        suitability: 82,
+        season: "Zaid (Summer)",
+        waterNeeds: "Moderate",
+        image: "https://images.unsplash.com/photo-1583002573215-021c33ea98d7?q=80&w=2070&auto=format&fit=crop",
+        profitMargin: "Medium"
+      },
+      {
+        name: "Bottle Gourd",
+        reason: "Efficient water usage in hot months",
+        suitability: 84,
+        season: "Zaid (Summer)",
+        waterNeeds: "Moderate",
+        image: "https://images.unsplash.com/photo-1594282486552-05b4d80fbb9f?q=80&w=2164&auto=format&fit=crop",
+        profitMargin: "Medium"
+      },
+      {
+        name: "Moong Dal (Green Gram)",
+        reason: "Short duration summer pulse",
+        suitability: 89,
+        season: "Zaid (Summer)",
+        waterNeeds: "Low",
+        image: "https://images.unsplash.com/photo-1585994089337-dc3f749a2190?q=80&w=2070&auto=format&fit=crop",
+        profitMargin: "Medium"
+      },
+      {
+        name: "Tomato",
+        reason: "Adaptable with summer irrigation",
+        suitability: 85,
+        season: "All Season/Zaid",
+        waterNeeds: "Moderate",
+        image: "https://images.unsplash.com/photo-1518977676601-b53f02bad67b?q=80&w=2070&auto=format&fit=crop",
+        profitMargin: "High"
+      },
+      {
+        name: "Lady Finger (Okra)",
+        reason: "Highly resistant to summer pests",
+        suitability: 87,
+        season: "Summer/Zaid",
+        waterNeeds: "Moderate",
+        image: "https://images.unsplash.com/photo-1615217430444-296fd661f05f?q=80&w=2070&auto=format&fit=crop",
+        profitMargin: "Medium"
+      },
+      {
+        name: "Brinjal (Eggplant)",
+        reason: "Resilient vegetable for summer heat",
+        suitability: 83,
+        season: "Summer/Zaid",
+        waterNeeds: "Moderate",
+        image: "https://images.unsplash.com/photo-1615484477778-ca3b77940c25?q=80&w=2070&auto=format&fit=crop",
         profitMargin: "Medium"
       }
     ];
@@ -165,14 +456,12 @@ function Dashboard() {
 
   const handleQuickAction = (action) => {
     switch (action) {
-      case 'irrigation':
-        alert("Starting irrigation system...");
-        break;
       case 'analytics':
         setActiveTab('analytics');
         break;
       case 'prediction':
         setActiveTab('crops');
+        getAIPrediction();
         break;
       case 'market':
         setActiveTab('market');
@@ -190,7 +479,7 @@ function Dashboard() {
     suggestCrops();
     loadMarketPrices();
     loadCropInformation();
-    
+
     const interval = setInterval(fetchSensorData, 30000);
     return () => clearInterval(interval);
   }, [navigate]);
@@ -229,7 +518,7 @@ function Dashboard() {
 
         {/* Navigation Tabs */}
         <div className="dashboard-tabs">
-          {["overview", "crops", "analytics", "market", "cropInfo"].map((tab) => (
+          {["overview", "crops", "analytics", "market"].map((tab) => (
             <button
               key={tab}
               className={`tab-button ${activeTab === tab ? 'active' : ''}`}
@@ -254,7 +543,7 @@ function Dashboard() {
                 Live Sensor Data
               </h2>
               <div className="sensor-cards">
-                <motion.div 
+                <motion.div
                   whileHover={{ scale: 1.02 }}
                   className={`sensor-card ${getStatusColor(sensorData.temperature, 'temperature')}`}
                 >
@@ -270,7 +559,7 @@ function Dashboard() {
                   </div>
                 </motion.div>
 
-                <motion.div 
+                <motion.div
                   whileHover={{ scale: 1.02 }}
                   className={`sensor-card ${getStatusColor(sensorData.humidity, 'humidity')}`}
                 >
@@ -286,7 +575,7 @@ function Dashboard() {
                   </div>
                 </motion.div>
 
-                <motion.div 
+                <motion.div
                   whileHover={{ scale: 1.02 }}
                   className={`sensor-card ${getStatusColor(sensorData.soilMoisture, 'moisture')}`}
                 >
@@ -302,7 +591,7 @@ function Dashboard() {
                   </div>
                 </motion.div>
 
-                <motion.div 
+                <motion.div
                   whileHover={{ scale: 1.02 }}
                   className="sensor-card status-optimal"
                 >
@@ -325,20 +614,22 @@ function Dashboard() {
                 Quick Actions
               </h2>
               <div className="action-cards">
-                <motion.div 
-                  whileHover={{ scale: 1.05 }} 
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
                   className="action-card"
                   onClick={() => handleQuickAction('irrigation')}
                 >
                   <div className="action-icon irrigation">
+                    <Link to="http://172.26.10.235">
                     <Droplets />
+                    </Link>
                   </div>
-                  <h3>Start Irrigation</h3>
+                  <h3> Irrigation</h3>
                   <p>Begin automated watering system</p>
                 </motion.div>
 
-                <motion.div 
-                  whileHover={{ scale: 1.05 }} 
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
                   className="action-card"
                   onClick={() => handleQuickAction('analytics')}
                 >
@@ -349,8 +640,8 @@ function Dashboard() {
                   <p>Detailed farm performance</p>
                 </motion.div>
 
-                <motion.div 
-                  whileHover={{ scale: 1.05 }} 
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
                   className="action-card"
                   onClick={() => handleQuickAction('prediction')}
                 >
@@ -361,8 +652,8 @@ function Dashboard() {
                   <p>Get AI recommendations</p>
                 </motion.div>
 
-                <motion.div 
-                  whileHover={{ scale: 1.05 }} 
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
                   className="action-card"
                   onClick={() => handleQuickAction('market')}
                 >
@@ -373,8 +664,8 @@ function Dashboard() {
                   <p>Check current rates</p>
                 </motion.div>
 
-                <motion.div 
-                  whileHover={{ scale: 1.05 }} 
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
                   className="action-card"
                   onClick={() => handleQuickAction('cropInfo')}
                 >
@@ -396,11 +687,41 @@ function Dashboard() {
             animate={{ opacity: 1 }}
             className="dashboard-content"
           >
+            {/* AI Real-time Prediction */}
+            <section className="recommendations-section">
+              <h2 className="section-title">
+                <Leaf className="section-icon" />
+                Real-time AI Analysis
+              </h2>
+              <div className="ai-prediction-card">
+                {isLoading ? (
+                  <div className="loading-state">
+                    <div className="loading-spinner"></div>
+                    <p>Consulting AI Model...</p>
+                  </div>
+                ) : aiPrediction ? (
+                  <div className="prediction-success">
+                    <div className="prediction-icon">🏆</div>
+                    <div className="prediction-text">
+                      <h3>Recommended Crop: <span className="highlight">{aiPrediction.toUpperCase()}</span></h3>
+                      <p>Based on live sensor data (Temp: {sensorData.temperature.toFixed(1)}°C, Humidity: {sensorData.humidity.toFixed(1)}%)</p>
+                    </div>
+                    <button onClick={getAIPrediction} className="refresh-btn">Re-analyze</button>
+                  </div>
+                ) : (
+                  <div className="prediction-prompt">
+                    <p>Click the button below to get a recommendation based on your real-time sensor data.</p>
+                    <button onClick={getAIPrediction} className="predict-btn-primary">Run AI Analysis</button>
+                  </div>
+                )}
+              </div>
+            </section>
+
             {/* Crop Recommendations */}
             <section className="recommendations-section">
               <h2 className="section-title">
                 <Sprout className="section-icon" />
-                AI Crop Recommendations
+                AI Crop Recommendations & Seasonal Guides
               </h2>
               <div className="crop-grid">
                 {suggestedCrops.map((crop, index) => (
@@ -412,32 +733,37 @@ function Dashboard() {
                     whileHover={{ scale: 1.02 }}
                     className="crop-card"
                   >
-                    <div className="crop-header">
-                      <div className="crop-image">{crop.image}</div>
-                      <div className="crop-info">
+                    <div className="crop-card-image-wrapper">
+                      <img src={crop.image} alt={crop.name} className="crop-card-image" />
+                      <div className="suitability-badge-overlay">
+                        <span className="suitability-score">{crop.suitability}%</span>
+                        Suitable
+                      </div>
+                    </div>
+                    <div className="crop-card-body">
+                      <div className="crop-header-inline">
                         <h3>{crop.name}</h3>
-                        <div className="suitability-badge">
-                          <span className="suitability-score">{crop.suitability}%</span>
-                          Suitable
+                      </div>
+                      <p className="crop-reason">{crop.reason}</p>
+                      <div className="crop-details">
+                        <div className="detail-item">
+                          <Calendar size={16} />
+                          <span className="detail-label-sub">Season:</span>
+                          <span>{crop.season}</span>
+                        </div>
+                        <div className="detail-item">
+                          <Droplets size={16} />
+                          <span className="detail-label-sub">Water:</span>
+                          <span>{crop.waterNeeds}</span>
+                        </div>
+                        <div className="detail-item">
+                          <DollarSign size={16} />
+                          <span className="detail-label-sub">Profit:</span>
+                          <span>{crop.profitMargin}</span>
                         </div>
                       </div>
+                      <button className="select-crop-btn">View Cultivation Guide</button>
                     </div>
-                    <p className="crop-reason">{crop.reason}</p>
-                    <div className="crop-details">
-                      <div className="detail-item">
-                        <Calendar size={16} />
-                        <span>{crop.season}</span>
-                      </div>
-                      <div className="detail-item">
-                        <Droplets size={16} />
-                        <span>{crop.waterNeeds}</span>
-                      </div>
-                      <div className="detail-item">
-                        <DollarSign size={16} />
-                        <span>{crop.profitMargin} Profit</span>
-                      </div>
-                    </div>
-                    <button className="select-crop-btn">Select This Crop</button>
                   </motion.div>
                 ))}
               </div>
@@ -666,7 +992,7 @@ function Dashboard() {
                         <span className="info-value">{crop.duration}</span>
                       </div>
                     </div>
-                    <button 
+                    <button
                       className="view-details-btn"
                       onClick={() => navigate('/crop-info', { state: { crop } })}
                     >
