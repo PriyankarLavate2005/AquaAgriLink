@@ -68,6 +68,7 @@ Check out the live deployment: [Smart Agro on Render](https://your-deployment-ur
    ```bash
    git clone https://github.com/PriyankarLavate2005/AquaAgriLink.git
    cd AquaAgriLink
+  ```
 
 ## 🚀 Deployment
 
@@ -167,4 +168,4 @@ For questions or contributions, reach out:
 
 Sonali Karveer: [GitHub Profile](https://github.com/sononalikarveer)
 
-**Happy Farming with Smart Agro! 🌾
+**Happy Farming with AquaAgriLink! 🌾**
