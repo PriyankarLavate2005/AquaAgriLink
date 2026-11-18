@@ -158,6 +158,6 @@ MERN-IoT-Agriculture/
 ## 📬 Contact
 For questions or contributions, reach out:
 
-**Ayush Kumar**: [[GitHub Profile](https://github.com/ayushchahat)](#)
+**Sonali Karveer**: [[GitHub Profile]([https://github.com/](https://github.com/sononalikarveer)](#)
 
 **Happy Farming with Smart Agro! 🌾
