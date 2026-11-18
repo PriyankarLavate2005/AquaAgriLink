@@ -15,7 +15,7 @@ const Footer = () => {
         <div className="footer-contact">
           <p>
             <strong>Email:</strong>{" "}
-            <a href="mailto:sonalikarveerkarveer@gmail.com">aquaagrilink12@gmail.com</a>
+            <a href="mailto:sonalikarveerkarveer@gmail.com">sonalikarveerkarveer@gmail.com</a>
           </p>
           <p>
             <strong>Phone:</strong>{" "}
@@ -23,9 +23,7 @@ const Footer = () => {
           </p>
           <p>
             <strong>GitHub:</strong>{" "}
-            <a href="https://github.com/PriyankarLavate2005/AquaAgriLink" target="_blank" rel="noopener noreferrer">
-              Smart_Agro Repository
-            </a>
+            <a href="https://github.com/PriyankarLavate2005/AquaAgriLink" target="_blank" rel="noopener noreferrer"> AquaAgriLink Repository </a>
           </p>
           <p>
             <strong>LinkedIn:</strong>{" "}
