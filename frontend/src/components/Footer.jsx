@@ -27,7 +27,7 @@ const Footer = () => {
           </p>
           <p>
             <strong>LinkedIn:</strong>{" "}
-            <a href="" target="_blank" rel="noopener noreferrer">
+            <a href="https://www.linkedin.com/in/sonali-karveer-793774271/" target="_blank" rel="noopener noreferrer">
               AquaAgriLink 
             </a>
           </p>
@@ -37,7 +37,7 @@ const Footer = () => {
         <div className="footer-bottom">
           <p>
             © 2026. All rights reserved. 🌾
-            <span className="footer-note"> Happy Farming with AquaagriLink</span>
+            <span className="footer-note"> Happy Farming with AquaAgriLink </span>
           </p>
         </div>
       </div>
