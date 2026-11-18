@@ -1,8 +1,15 @@
-# Smart Agro: IoT-Based Agriculture Monitoring System 🌱
+# AquaAgriLink - Smart Agriculture Platform🌱
 
-**Smart Agro** is an innovative web-based application powered by the MERN stack (MongoDB, Express.js, React.js, Node.js) designed to revolutionize agricultural monitoring. By leveraging IoT devices, this platform provides real-time data, automates essential processes, and empowers farmers with actionable insights to boost productivity and sustainability.
+**AquaAgriLink** is an innovative web-based application powered by the MERN stack (MongoDB, Express.js, React.js, Node.js) designed to revolutionize agricultural monitoring. By leveraging IoT devices, this platform provides real-time data, automates essential processes, and empowers farmers with actionable insights to boost productivity and sustainability. Our B.Tech major project combining IoT farm monitoring, automated irrigation, crop recommendation, plant-disease detection, forecasting, and a MERN dashboard.
 
 ---
+
+## Team Members
+ **Sonali Karveer** : AI and ML model developer
+ **Priyanka Lavate** : Frontend and Backend developer
+ 
+ ---
+
 
 ## 🌟 Features
 
@@ -59,8 +66,8 @@ Check out the live deployment: [Smart Agro on Render](https://your-deployment-ur
 ### Backend Setup
 1. Clone the repository:
    ```bash
-   git clone https://github.com/ayushchahat/Smart_Agro.git
-   cd Smart_Agro/backend
+   git clone https://github.com/PriyankarLavate2005/AquaAgriLink.git
+   cd AquaAgriLink
 
 ## 🚀 Deployment
 
@@ -158,6 +165,6 @@ MERN-IoT-Agriculture/
 ## 📬 Contact
 For questions or contributions, reach out:
 
-**Sonali Karveer**: [[GitHub Profile]([https://github.com/](https://github.com/sononalikarveer)](#)
+Sonali Karveer: [GitHub Profile](https://github.com/sononalikarveer)
 
 **Happy Farming with Smart Agro! 🌾
